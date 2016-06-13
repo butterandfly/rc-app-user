@@ -1,0 +1,81 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../app-storage/app-localstorage/app-localstorage-document.html">
+
+<!--
+`rc-app-user`提供对当前用户、上次登录用户等资源的操作。底层使用localstorage。
+
+@demo demo/index.html
+-->
+
+<dom-module id="rc-app-user">
+  <template>
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+    
+    <!-- 保存当前的user -->
+    <app-localstorage-document key="rcAppUser" data="{{_user}}" session-only></app-localstorage-document>
+    
+    <!-- 保存历史user -->
+    <app-localstorage-document key="rcAppHistoryUser" data="{{_historyUser}}"></app-localstorage-document>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'rc-app-user',
+
+      properties: {
+        /**
+         * _user数据的copy。
+         */
+        userCopy: {
+          type: Object,
+          notify: true,
+          computed: '_computeUserCopy(_user)'
+        },
+        
+        /**
+         * _historyUser数据的copy。
+         */
+        historyUserCopy: {
+          type: Object,
+          notify: true,
+          computed: '_computeHistoryUserCopy(_user)'
+        },
+        
+        _user: {
+          type: Object,
+          notify: true,
+          value: {}
+        },
+        
+        _historyUser: {
+          type: Object,
+          notify: true,
+          value: {}
+        }
+      },
+      
+      _computeUserCopy: function(user) {
+        return JSON.parse(JSON.stringify(user));
+      },
+      
+      _computeHistoryUserCopy: function(historyUser) {
+        return JSON.parse(JSON.stringify(historyUser));
+      },
+
+      /**
+       * 设置当前用户，会同步到全局及sessionStorage。
+       *
+       */
+      setUser: function(user) {
+        this._user = user;
+      }
+      
+      // TODO: setHistoryUser
+    });
+  </script>
+</dom-module>
