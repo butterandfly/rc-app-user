@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+  <head>
+    <title>rc-app-user demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../rc-app-user.html">
+    <link rel="import" href="../../paper-input/paper-input.html">
+    <link rel="import" href="../../paper-button/paper-button.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+  </head>
+  <body>
+
+    <template is="dom-bind" id="app">
+      <div class="vertical-section-container centered">
+        <h2>HistoryUser rc-app-user Demo</h2>
+        <div>
+          <h3>Set historyUser</h3>
+          <rc-app-user id="user21" history-user-copy="{{userCopy21}}"></rc-app-user>
+          <paper-input id="usermassage1" name="usermassage1" value="[[userCopy21.usermassage]]"></paper-input>
+          <paper-button on-click="setHistoryUser">SetHistoryUser</paper-button>
+        </div>
+
+        <div>
+          <h3>Get historyUser</h3>
+          <rc-app-user id="user22"></rc-app-user>
+          <paper-input id="usermassage2" name="usermassage2"></paper-input>
+          <paper-button on-click="getHistoryUser">GetHistoryUser</paper-button>
+        </div>
+      </div>
+    </template>
+
+    <script>
+      var app = document.querySelector('#app');
+
+      app.setHistoryUser = function() {
+        var user21 = document.querySelector('#user21');
+        var input21 = document.querySelector('#usermassage1');
+
+        user21.setHistoryUser({usermassage: input21.value});
+      };
+
+      app.getHistoryUser = function() {
+        var user22 = document.querySelector('#user22');
+        var input22 = document.querySelector('#usermassage2');
+
+        var historyUser = user22.getHistoryUser();
+        input22.value = historyUser.usermassage;
+      };
+    </script>
+  </body>
+</html>

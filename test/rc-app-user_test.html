@@ -14,16 +14,76 @@
 
     <test-fixture id="basic">
       <template>
-        <rc-app-user></rc-app-user>
+        <rc-app-user id="user1"></rc-app-user>
+        <rc-app-user id="user2"></rc-app-user>
       </template>
     </test-fixture>
 
     <script>
       suite('rc-app-user', function() {
+        'use strict'
 
-        test('instantiating the element works', function() {
-          let element = fixture('basic');
-          assert.equal(element.is, 'rc-app-user');
+        var user1, user2;
+
+        function timePasses(ms) {
+          return new Promise(function(resolve) {
+            window.setTimeout(function() {
+              resolve();
+            }, ms);
+          });
+        }
+
+        setup(function() {
+          document.querySelector('#basic').create();
+          user1 = document.querySelector('#user1');
+          user2 = document.querySelector('#user2');
+        });
+
+        teardown(function() {
+          sessionStorage.clear();
+        });
+
+        test('Synchronization', function() {
+          let userData = {username: 'test'};
+          user1.setUser(userData);
+
+          assert.equal(user1.userCopy.username, 'test');
+          return timePasses(1000).then(function() {
+            assert.equal(user2.userCopy.username, 'test');
+          });
+        });
+
+        test('Setting app-localstorage-document done', function() {
+          let appUserStorage =  user1.querySelector('[key="rcAppUser"]');
+          let appHistoryUserStorage =  user1.querySelector('[key="rcAppHistoryUser"]');
+
+          let userData = {username: 'somename'};
+          user1.setUser(userData);
+          user1.setHistoryUser(userData);
+
+          assert.equal(appUserStorage.data, userData);
+          assert.equal(appHistoryUserStorage.data, userData);
+        });
+
+        test('Get and set historyUser', function() {
+          let userData = {username: 'test'};
+          user1.setHistoryUser(userData);
+
+          let historyUser = user1.getHistoryUser();
+          assert.equal(historyUser.username, 'test');
+        });
+
+        test('test isLogin property', function() {
+          assert.equal(user1.isLogin, false);
+
+          let userData = {username: 'test'};
+          user1.setUser(userData);
+
+          assert.equal(user1.isLogin, true);
+
+          user1.resetUser();
+
+          assert.equal(user1.isLogin, false);
         });
 
       });

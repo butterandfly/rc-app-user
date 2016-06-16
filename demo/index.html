@@ -20,38 +20,71 @@
 
     <template is="dom-bind" id="app">
       <div class="vertical-section-container centered">
-        <h3>Basic rc-app-user Demo</h3>
+        <h2>Basic rc-app-user Demo</h2>
         <div>
-          <h2>First rc-app-user</h2>
+          <h3>First rc-app-user</h3>
           <rc-app-user id="user1" user-copy="{{userCopy1}}"></rc-app-user>
-          <paper-input id="username1" name="username" value="[[userCopy1.username]]"></paper-input>
+          <paper-input
+            id="username1"
+            name="username"
+            pattern=".+"
+            required
+            auto-validate
+            error-message="write something"
+            value="[[userCopy1.username]]">
+          </paper-input>
           <paper-button on-click="submit1">Submit</paper-button>
         </div>
-        
+
         <div>
-          <h2>Second rc-app-user</h2>
+          <h3>Second rc-app-user</h3>
           <rc-app-user id="user2" user-copy="{{userCopy2}}"></rc-app-user>
-          <paper-input id="username2" name="username" value="[[userCopy2.username]]"></paper-input>
+          <paper-input
+            id="username2"
+            name="username"
+            pattern=".+"
+            required
+            auto-validate
+            error-message="write something"
+            value="[[userCopy2.username]]">
+          </paper-input>
           <paper-button on-click="submit2">Submit</paper-button>
+        </div>
+
+        <div>
+          <h3>Logout</h3>
+          <rc-app-user id="user3" user-copy="{{userCopy3}}" is-login="{{isLogin}}"></rc-app-user>
+          <paper-input id="username2" name="username" label="isLogin's value" value="[[isLogin]]" readonly></paper-input>
+          <paper-button on-click="logout">Logout</paper-button>
         </div>
       </div>
     </template>
 
     <script>
       var app = document.querySelector('#app');
-      
+
       app.submit1 = function() {
         var user1 = document.querySelector('#user1');
-        var input1 = document.querySelector('#username1')
-        
-        user1.setUser({username: input1.value});
+        var input1 = document.querySelector('#username1');
+
+        if (input1.value !== undefined) {
+          user1.setUser({username: input1.value});
+        }
       };
-      
+
       app.submit2 = function() {
         var user2 = document.querySelector('#user2');
-        var input2 = document.querySelector('#username2')
-        
-        user2.setUser({username: input2.value});
+        var input2 = document.querySelector('#username2');
+
+        if (input2.value !== undefined) {
+          user2.setUser({username: input2.value});
+        }
+      };
+
+      app.logout = function() {
+        var user3 = document.querySelector('#user3');
+
+        user3.resetUser();
       };
     </script>
   </body>
