@@ -43,7 +43,7 @@
           sessionStorage.clear();
         });
 
-        test('Synchronization', function() {
+        test('所有rc-app-user组件的同步', function() {
           let userData = {username: 'test'};
           user1.setUser(userData);
 
@@ -53,7 +53,7 @@
           });
         });
 
-        test('Setting app-localstorage-document done', function() {
+        test('设置app-localstorage-document', function() {
           let appUserStorage =  user1.querySelector('[key="rcAppUser"]');
           let appHistoryUserStorage =  user1.querySelector('[key="rcAppHistoryUser"]');
 
@@ -65,7 +65,7 @@
           assert.equal(appHistoryUserStorage.data, userData);
         });
 
-        test('Get and set historyUser', function() {
+        test('设置与获取historyUser', function() {
           let userData = {username: 'test'};
           user1.setHistoryUser(userData);
 
@@ -73,7 +73,7 @@
           assert.equal(historyUser.username, 'test');
         });
 
-        test('test isLogin property', function() {
+        test('isLogin属性', function() {
           assert.equal(user1.isLogin, false);
 
           let userData = {username: 'test'};

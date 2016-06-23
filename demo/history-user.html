@@ -22,17 +22,24 @@
       <div class="vertical-section-container centered">
         <h2>HistoryUser rc-app-user Demo</h2>
         <div>
-          <h3>Set historyUser</h3>
-          <rc-app-user id="user21" history-user-copy="{{userCopy21}}"></rc-app-user>
-          <paper-input id="usermassage1" name="usermassage1" value="[[userCopy21.usermassage]]"></paper-input>
-          <paper-button on-click="setHistoryUser">SetHistoryUser</paper-button>
+          <h3>First rc-app-user</h3>
+          <rc-app-user id="user1" history-user-copy="{{userCopy1}}"></rc-app-user>
+          <paper-input id="username1" name="username1" value="[[userCopy1.username]]"></paper-input>
+          <paper-button on-click="submit1">Submit</paper-button>
         </div>
 
         <div>
-          <h3>Get historyUser</h3>
-          <rc-app-user id="user22"></rc-app-user>
-          <paper-input id="usermassage2" name="usermassage2"></paper-input>
-          <paper-button on-click="getHistoryUser">GetHistoryUser</paper-button>
+          <h3>Second rc-app-user</h3>
+          <rc-app-user id="user2" history-user-copy="{{userCopy2}}"></rc-app-user>
+          <paper-input id="username2" name="username2" value="[[userCopy2.username]]"></paper-input>
+          <paper-button on-click="submit2">Submit</paper-button>
+        </div>
+
+        <div>
+          <h3>GetHistoryUserClone rc-app-user</h3>
+          <rc-app-user id="user3"></rc-app-user>
+          <paper-input id="username3" name="username3"></paper-input>
+          <paper-button on-click="getHistoryUserClone">getHistoryUserClone</paper-button>
         </div>
       </div>
     </template>
@@ -40,19 +47,26 @@
     <script>
       var app = document.querySelector('#app');
 
-      app.setHistoryUser = function() {
-        var user21 = document.querySelector('#user21');
-        var input21 = document.querySelector('#usermassage1');
+      app.submit1 = function() {
+        var user1 = document.querySelector('#user1');
+        var input1 = document.querySelector('#username1');
 
-        user21.setHistoryUser({usermassage: input21.value});
+        user1.setHistoryUser({username: input1.value});
       };
 
-      app.getHistoryUser = function() {
-        var user22 = document.querySelector('#user22');
-        var input22 = document.querySelector('#usermassage2');
+      app.submit2 = function() {
+        var user2 = document.querySelector('#user2');
+        var input2 = document.querySelector('#username2');
 
-        var historyUser = user22.getHistoryUser();
-        input22.value = historyUser.usermassage;
+        user2.setHistoryUser({username: input2.value});
+      };
+
+      app.getHistoryUserClone = function() {
+        var user3 = document.querySelector('#user3');
+        var input3 = document.querySelector('#username3');
+
+        var historyUser = user3.getHistoryUserClone();
+        input3.value = historyUser.username;
       };
     </script>
   </body>

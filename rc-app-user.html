@@ -102,6 +102,14 @@
       },
 
       /**
+       * 重置历史用户信息，会同步到全局及localStorage。
+       *
+       */
+      resetHistoryUser: function(historyUser) {
+        this._historyUser = '';
+      },
+
+      /**
        * 设置上次用户登录信息，会同步到全局及localStorage。
        *
        */
@@ -110,15 +118,12 @@
       },
 
       /**
-       * 获取上次用户登录信息。
+       * 获取上次用户登录的信息。
        *
        */
-      getHistoryUser: function() {
-        if (this._historyUser) {
-          return this._historyUser;
-        }
+      getHistoryUserClone: function() {
+        return JSON.parse(JSON.stringify(this._historyUser));
       }
-
     });
   </script>
 </dom-module>
