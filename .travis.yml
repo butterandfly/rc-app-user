@@ -1,21 +1,21 @@
 language: node_js
-sudo: required
-dist: trusty
 node_js: stable
+dist: trusty
+sudo: required
 addons:
-  firefox: 46.0
+  firefox: latest
+  sauce_connect: true
   apt:
     sources:
     - google-chrome
     packages:
     - google-chrome-stable
 before_script:
-- npm install web-component-tester
-- npm install -g bower
+- npm install -g bower web-component-tester
 - bower install
 script:
 - xvfb-run wct
-- if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then wct -s "default"; fi
+- if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then wct -s 'default'; fi
 env:
   global:
   - secure: vh8PhKo4w9kGiwgfy0eN/j4aaqRm8VyLHFTRTHxNFOn3wGmLyffc8V4e/i/2iLG/NsnugNPUgxq/iHcpNCuPfXq/SRpbm34XzyXoihD1b7QFktB0SItX2gKfdhpctiJKQPvmJTaATDpu+eJHXTtZVbV/4hpbQfipDZ4MPNvcvPq15OHZpvGpBWRWmDJb1nrlnhUAzFmS8k9ytKHiZBri5ztEk++stuj4my6JOO23ccbvGVndmKGtNTSTq3R9Ndw+ULygQhujHYI+bWDExhA38wdpQVWDJY80aLHvAftRuhreQt5/hK/krk2nU5suB4q1bf7kEvCrNKGmyN5dj3NTPxLz0K4+57drSCPN9sPPwMS5CTsAT5sWKabTK0qYE2CqBYtq4NcIVSVji5WD+0yTbShFFgCSLa7jdF2sQ1WbNEQUjRHI75S5jOWi3BJJxENupnxnlkq60ttJT05EL9bf0iMqnSrK8WnITxR0sihwWkx2tMCJGEtyXe90XUK5X3hFjRSgn3jP+/RhlwUDA8+hVecn7XISLo70TsE8p/txApzgh5w/B0YTKFziIBbPqUdPsaZYVKuUjrKkNSBbYS0HBR1yvZNRsOu1Leeb4BgDwhOqi2oNZW01xHJo0E+xNGDkXXWfXozAKnWGC93DrEbUyobHHR6kYRPRk3E5fMBt23A=
