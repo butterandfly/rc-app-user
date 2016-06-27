@@ -20,27 +20,26 @@
 
     <template is="dom-bind" id="app">
       <div class="vertical-section-container centered">
-        <h2>Basic rc-app-user Demo</h2>
+        <h2>HistoryUser rc-app-user Demo</h2>
         <div>
           <h3>First rc-app-user</h3>
-          <rc-app-user id="user1" user-copy="{{userCopy1}}"></rc-app-user>
-          <paper-input id="username1" name="username"value="[[userCopy1.username]]"></paper-input>
+          <rc-app-user id="user1" history-user-copy="{{userCopy1}}"></rc-app-user>
+          <paper-input id="username1" name="username1" value="[[userCopy1.username]]"></paper-input>
           <paper-button on-click="submit1">Submit</paper-button>
         </div>
 
         <div>
           <h3>Second rc-app-user</h3>
-          <rc-app-user id="user2" user-copy="{{userCopy2}}"></rc-app-user>
-          <paper-input id="username2" name="username" value="[[userCopy2.username]]">
-          </paper-input>
+          <rc-app-user id="user2" history-user-copy="{{userCopy2}}"></rc-app-user>
+          <paper-input id="username2" name="username2" value="[[userCopy2.username]]"></paper-input>
           <paper-button on-click="submit2">Submit</paper-button>
         </div>
 
         <div>
-          <h3>Reset</h3>
-          <rc-app-user id="user3" user-copy="{{userCopy3}}" is-login="{{isLogin}}"></rc-app-user>
-          isLogin's value: <span>{{isLogin}}</span><br>
-          <paper-button on-click="reset">Reset</paper-button>
+          <h3>GetHistoryUserClone rc-app-user</h3>
+          <rc-app-user id="user3"></rc-app-user>
+          <paper-input id="username3" name="username3"></paper-input>
+          <paper-button on-click="getHistoryUserClone">getHistoryUserClone</paper-button>
         </div>
       </div>
     </template>
@@ -52,20 +51,22 @@
         var user1 = document.querySelector('#user1');
         var input1 = document.querySelector('#username1');
 
-        user1.setUser({username: input1.value});
+        user1.setHistoryUser({username: input1.value});
       };
 
       app.submit2 = function() {
         var user2 = document.querySelector('#user2');
         var input2 = document.querySelector('#username2');
 
-        user2.setUser({username: input2.value});
+        user2.setHistoryUser({username: input2.value});
       };
 
-      app.reset = function() {
+      app.getHistoryUserClone = function() {
         var user3 = document.querySelector('#user3');
+        var input3 = document.querySelector('#username3');
 
-        user3.resetUser();
+        var historyUser = user3.getHistoryUserClone();
+        input3.value = historyUser.username;
       };
     </script>
   </body>
