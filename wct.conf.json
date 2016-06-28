@@ -1,8 +1,6 @@
 {
-  "verbose": true,
   "plugins": {
     "local": {
-      "skipSeleniumInstall": true,
       "browsers": ["chrome"]
     }
   }

@@ -1,5 +1,4 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../app-storage/app-localstorage/app-localstorage-document.html">
 
 <!--
 
@@ -12,190 +11,173 @@
 
 -->
 
-<dom-module id="rc-app-user">
-  <template>
-    <style>
-      :host {
-        display: none;
+<script>
+  Polymer({
+
+    is: 'rc-app-user',
+
+    properties: {
+      /**
+       * _user数据的copy。
+       */
+      userCopy: {
+        type: Object,
+        notify: true,
+        computed: '_computeUserCopy(_user)'
+      },
+
+      /**
+       * _historyUser数据的copy。
+       */
+      historyUserCopy: {
+        type: Object,
+        notify: true,
+        computed: '_computeHistoryUserCopy(_historyUser)'
+      },
+
+      /**
+       * 根据userCopy的值来判断用户是否登录。设置userCopy时应避免空字符串，否则会影响isLogin的判断。
+       */
+      isLogin: {
+        type: Boolean,
+        notify: true,
+        computed: '_computeIsLogin(_user)'
+      },
+
+      _user: {
+        type: Object,
+        notify: true
+      },
+
+      _historyUser: {
+        type: Object,
+        notify: true
       }
-    </style>
+    },
 
-    <!-- 保存当前的user -->
-    <!-- <app-localstorage-document id="userDoc" key="rcAppUser" data="{{_user}}" session-only></app-localstorage-document> -->
+    ready: function() {
+      this._setUserFromSessionStorage();
 
-    <!-- 保存历史user -->
-    <!-- <app-localstorage-document sequential-transactions id="historyUserDoc" key="rcAppHistoryUser" data="{{_historyUser}}"></app-localstorage-document> -->
-    <!-- <app-localstorage-document id="historyUserDoc" key="rcAppHistoryUser" data="hihi"></app-localstorage-document> -->
-  </template>
+      this.listen(
+        window.top,
+        'rc-app-user-updated',
+        '_onRcAppUserUpdated');
 
-  <script>
-    Polymer({
+      this._setHistoryUserFromLocalStorage();
+      this.listen(
+        window.top,
+        'rc-app-history-user-updated',
+        '_onRcAppHistoryUserUpdated');
+    },
 
-      is: 'rc-app-user',
+    detached: function() {
+      this.unlisten(
+        window.top,
+        'rc-app-user-updated',
+        '_onRcAppUserUpdated');
 
-      properties: {
-        /**
-         * _user数据的copy。
-         */
-        userCopy: {
-          type: Object,
-          notify: true,
-          computed: '_computeUserCopy(_user)'
-        },
+      this.unlisten(
+        window.top,
+        'rc-app-history-user-updated',
+        '_onRcAppHistoryUserUpdated');
+    },
 
-        /**
-         * _historyUser数据的copy。
-         */
-        historyUserCopy: {
-          type: Object,
-          notify: true,
-          computed: '_computeHistoryUserCopy(_historyUser)'
-        },
+    _onRcAppUserUpdated: function() {
+      this._setUserFromSessionStorage();
+    },
 
-        /**
-         * 根据userCopy的值来判断用户是否登录。设置userCopy时应避免空字符串，否则会影响isLogin的判断。
-         */
-        isLogin: {
-          type: Boolean,
-          notify: true,
-          computed: '_computeIsLogin(_user)'
-        },
+    _onRcAppHistoryUserUpdated: function() {
+      this._setHistoryUserFromLocalStorage();
+    },
 
-        _user: {
-          type: Object,
-          notify: true
-        },
-
-        _historyUser: {
-          type: Object,
-          notify: true
-        }
-      },
-
-      ready: function() {
-        this._setUserFromSessionStorage();
-
-        this.listen(
-          window.top,
-          'rc-app-user-updated',
-          '_onRcAppUserUpdated');
-
-        this._setHistoryUserFromLocalStorage();
-        this.listen(
-          window.top,
-          'rc-app-history-user-updated',
-          '_onRcAppHistoryUserUpdated');
-      },
-
-      detached: function() {
-        this.unlisten(
-          window.top,
-          'rc-app-user-updated',
-          '_onRcAppUserUpdated');
-
-        this.unlisten(
-          window.top,
-          'rc-app-history-user-updated',
-          '_onRcAppHistoryUserUpdated');
-      },
-
-      _onRcAppUserUpdated: function() {
-        this._setUserFromSessionStorage();
-      },
-
-      _onRcAppHistoryUserUpdated: function() {
-        this._setHistoryUserFromLocalStorage();
-      },
-
-      // 从sessionStorage中得到当前user
-      _setUserFromSessionStorage: function() {
-        userStr = sessionStorage.rcAppUser;
-        if(userStr) {
-          this._user = JSON.parse(userStr);
-          return;
-        }
-
-        this._user = undefined;
-      },
-
-      // 从sessionStorage中得到当前user
-      _setHistoryUserFromLocalStorage: function() {
-        userStr = localStorage.rcAppHistoryUser;
-        if(userStr) {
-          this._historyUser = JSON.parse(userStr);
-          return;
-        }
-
-        this._historyUser = undefined;
-      },
-
-      _computeUserCopy: function(user) {
-        if (!this._user) {
-          return this._user;
-        }
-
-        return JSON.parse(JSON.stringify(user));
-      },
-
-      _computeHistoryUserCopy: function(historyUser) {
-        if (!this._historyUser) {
-          return this._historyUser;
-        }
-
-        return JSON.parse(JSON.stringify(historyUser));
-      },
-
-      _computeIsLogin: function(user) {
-        return !!user;
-      },
-
-      /**
-       * 设置当前用户，会同步到全局及sessionStorage。
-       *
-       */
-      setUser: function(user) {
-        sessionStorage.setItem('rcAppUser', JSON.stringify(user));
-
-        this.fire('rc-app-user-updated', this, {
-          node: window.top
-        });
-      },
-
-      /**
-       * 重置用户信息，会同步到全局及sessionStorage。退出登录时需要执行。
-       *
-       */
-      resetUser: function(user) {
-        sessionStorage.removeItem('rcAppUser');
-
-        this.fire('rc-app-user-updated', this, {
-          node: window.top
-        });
-      },
-
-      /**
-       * 设置上次用户登录信息，会同步到全局及localStorage。
-       *
-       */
-      setHistoryUser: function(historyUser) {
-        localStorage.setItem('rcAppHistoryUser', JSON.stringify(historyUser));
-
-        this.fire('rc-app-history-user-updated', this, {
-          node: window.top
-        });
-      },
-
-      /**
-       * 重置历史用户信息，会同步到全局及localStorage。
-       *
-       */
-      resetHistoryUser: function(historyUser) {
-        localStorage.removeItem('rcAppHistoryUser');
-
-        this.fire('rc-app-history-user-updated', this, {
-          node: window.top
-        });
+    // 从sessionStorage中得到当前user
+    _setUserFromSessionStorage: function() {
+      userStr = sessionStorage.rcAppUser;
+      if(userStr) {
+        this._user = JSON.parse(userStr);
+        return;
       }
-    });
-  </script>
-</dom-module>
+
+      this._user = undefined;
+    },
+
+    // 从sessionStorage中得到当前user
+    _setHistoryUserFromLocalStorage: function() {
+      userStr = localStorage.rcAppHistoryUser;
+      if(userStr) {
+        this._historyUser = JSON.parse(userStr);
+        return;
+      }
+
+      this._historyUser = undefined;
+    },
+
+    _computeUserCopy: function(user) {
+      if (!this._user) {
+        return this._user;
+      }
+
+      return JSON.parse(JSON.stringify(user));
+    },
+
+    _computeHistoryUserCopy: function(historyUser) {
+      if (!this._historyUser) {
+        return this._historyUser;
+      }
+
+      return JSON.parse(JSON.stringify(historyUser));
+    },
+
+    _computeIsLogin: function(user) {
+      return !!user;
+    },
+
+    /**
+     * 设置当前用户，会同步到全局及sessionStorage。
+     *
+     */
+    setUser: function(user) {
+      sessionStorage.setItem('rcAppUser', JSON.stringify(user));
+
+      this.fire('rc-app-user-updated', this, {
+        node: window.top
+      });
+    },
+
+    /**
+     * 重置用户信息，会同步到全局及sessionStorage。退出登录时需要执行。
+     *
+     */
+    resetUser: function(user) {
+      sessionStorage.removeItem('rcAppUser');
+
+      this.fire('rc-app-user-updated', this, {
+        node: window.top
+      });
+    },
+
+    /**
+     * 设置上次用户登录信息，会同步到全局及localStorage。
+     *
+     */
+    setHistoryUser: function(historyUser) {
+      localStorage.setItem('rcAppHistoryUser', JSON.stringify(historyUser));
+
+      this.fire('rc-app-history-user-updated', this, {
+        node: window.top
+      });
+    },
+
+    /**
+     * 重置历史用户信息，会同步到全局及localStorage。
+     *
+     */
+    resetHistoryUser: function(historyUser) {
+      localStorage.removeItem('rcAppHistoryUser');
+
+      this.fire('rc-app-history-user-updated', this, {
+        node: window.top
+      });
+    }
+  });
+</script>
