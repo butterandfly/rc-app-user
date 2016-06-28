@@ -19,10 +19,36 @@
       </template>
     </test-fixture>
 
-    <script>
-      suite('rc-app-user', function() {
-        'use strict'
+    <test-fixture id="initSuite">
+      <template>
+        <rc-app-user id="user1"></rc-app-user>
+      </template>
+    </test-fixture>
 
+    <script>
+      suite('rc-app-user初始化时已有sessionStorage及localStorage', function() {
+        var user1, user2;
+
+        setup(function() {
+          sessionStorage.setItem('rcAppUser', '{"username": "initUser"}');
+          localStorage.setItem('rcAppHistoryUser', '{"username": "initHistoryUser"}');
+          document.querySelector('#initSuite').create();
+          user1 = document.querySelector('#user1');
+        });
+
+        teardown(function() {
+          sessionStorage.clear();
+          localStorage.clear();
+        });
+
+        test('初始化user', function() {
+          assert.equal(user1.userCopy.username, 'initUser');
+          assert.equal(user1.historyUserCopy.username, 'initHistoryUser');
+        });
+
+      });
+
+      suite('rc-app-user', function() {
         var user1, user2;
 
         function timePasses(ms) {
@@ -41,49 +67,73 @@
 
         teardown(function() {
           sessionStorage.clear();
+          localStorage.clear();
         });
 
-        test('所有rc-app-user组件的同步', function() {
-          let userData = {username: 'test'};
+        test('userCopy及setUser', function() {
+          assert.equal(user1.userCopy, undefined);
+
+          let userData = {username: 'testUser1'};
           user1.setUser(userData);
 
-          assert.equal(user1.userCopy.username, 'test');
-          return timePasses(1000).then(function() {
-            assert.equal(user2.userCopy.username, 'test');
+          assert.equal(user1._user.username, userData.username);
+          assert.equal(user1.userCopy.username, 'testUser1');
+          assert.equal(JSON.parse(sessionStorage.rcAppUser).username, 'testUser1');
+        });
+
+        test('同步rc-app-user的user', function() {
+          let userData = {username: 'testUser2'};
+          user1.setUser(userData);
+
+          assert.equal(user1.userCopy.username, 'testUser2');
+          return timePasses(1).then(function() {
+            assert.equal(user2.userCopy.username, 'testUser2');
           });
         });
 
-        test('设置app-localstorage-document', function() {
-          let appUserStorage =  user1.querySelector('[key="rcAppUser"]');
-          let appHistoryUserStorage =  user1.querySelector('[key="rcAppHistoryUser"]');
-
-          let userData = {username: 'somename'};
+        test('resetUser', function() {
+          let userData = {username: 'testUser2'};
           user1.setUser(userData);
-          user1.setHistoryUser(userData);
+          assert.equal(user1.userCopy.username, 'testUser2');
 
-          assert.equal(appUserStorage.data, userData);
-          assert.equal(appHistoryUserStorage.data, userData);
-        });
-
-        test('设置与获取historyUser', function() {
-          let userData = {username: 'test'};
-          user1.setHistoryUser(userData);
-
-          let historyUser = user1.getHistoryUser();
-          assert.equal(historyUser.username, 'test');
+          user1.resetUser();
+          assert.equal(user1.userCopy, undefined);
         });
 
         test('isLogin属性', function() {
-          assert.equal(user1.isLogin, false);
+          assert.notOk(user1.isLogin);
 
           let userData = {username: 'test'};
           user1.setUser(userData);
 
-          assert.equal(user1.isLogin, true);
+          assert.ok(user1.isLogin);
 
           user1.resetUser();
 
-          assert.equal(user1.isLogin, false);
+          assert.notOk(user1.isLogin);
+        });
+
+        // ----- historyUser -----
+
+        test('historyUserCopy及setHistoryUser', function() {
+          assert.equal(user1.historyUserCopy, undefined);
+
+          let userData = {username: 'testUser1'};
+          user1.setHistoryUser(userData);
+
+          assert.equal(user1._historyUser.username, userData.username);
+          assert.equal(user1.historyUserCopy.username, 'testUser1');
+          assert.equal(JSON.parse(localStorage.rcAppHistoryUser).username, 'testUser1');
+        });
+
+        test('同步rc-app-user的historyUser', function() {
+          let userData = {username: 'testUser2'};
+          user1.setHistoryUser(userData);
+
+          assert.equal(user1.historyUserCopy.username, 'testUser2');
+          return timePasses(1).then(function() {
+            assert.equal(user2.historyUserCopy.username, 'testUser2');
+          });
         });
 
       });

@@ -35,12 +35,6 @@
           <paper-button on-click="submit2">Submit</paper-button>
         </div>
 
-        <div>
-          <h3>GetHistoryUserClone rc-app-user</h3>
-          <rc-app-user id="user3"></rc-app-user>
-          <paper-input id="username3" name="username3"></paper-input>
-          <paper-button on-click="getHistoryUserClone">getHistoryUserClone</paper-button>
-        </div>
       </div>
     </template>
 
@@ -61,13 +55,6 @@
         user2.setHistoryUser({username: input2.value});
       };
 
-      app.getHistoryUserClone = function() {
-        var user3 = document.querySelector('#user3');
-        var input3 = document.querySelector('#username3');
-
-        var historyUser = user3.getHistoryUserClone();
-        input3.value = historyUser.username;
-      };
     </script>
   </body>
 </html>

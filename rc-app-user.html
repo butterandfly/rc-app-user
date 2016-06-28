@@ -21,10 +21,11 @@
     </style>
 
     <!-- 保存当前的user -->
-    <app-localstorage-document key="rcAppUser" data="{{_user}}" session-only></app-localstorage-document>
+    <!-- <app-localstorage-document id="userDoc" key="rcAppUser" data="{{_user}}" session-only></app-localstorage-document> -->
 
     <!-- 保存历史user -->
-    <app-localstorage-document key="rcAppHistoryUser" data="{{_historyUser}}"></app-localstorage-document>
+    <!-- <app-localstorage-document sequential-transactions id="historyUserDoc" key="rcAppHistoryUser" data="{{_historyUser}}"></app-localstorage-document> -->
+    <!-- <app-localstorage-document id="historyUserDoc" key="rcAppHistoryUser" data="hihi"></app-localstorage-document> -->
   </template>
 
   <script>
@@ -62,27 +63,90 @@
 
         _user: {
           type: Object,
-          notify: true,
-          value: ''
+          notify: true
         },
 
         _historyUser: {
           type: Object,
-          notify: true,
-          value: ''
+          notify: true
         }
       },
 
+      ready: function() {
+        this._setUserFromSessionStorage();
+
+        this.listen(
+          window.top,
+          'rc-app-user-updated',
+          '_onRcAppUserUpdated');
+
+        this._setHistoryUserFromLocalStorage();
+        this.listen(
+          window.top,
+          'rc-app-history-user-updated',
+          '_onRcAppHistoryUserUpdated');
+      },
+
+      detached: function() {
+        this.unlisten(
+          window.top,
+          'rc-app-user-updated',
+          '_onRcAppUserUpdated');
+
+        this.unlisten(
+          window.top,
+          'rc-app-history-user-updated',
+          '_onRcAppHistoryUserUpdated');
+      },
+
+      _onRcAppUserUpdated: function() {
+        this._setUserFromSessionStorage();
+      },
+
+      _onRcAppHistoryUserUpdated: function() {
+        this._setHistoryUserFromLocalStorage();
+      },
+
+      // 从sessionStorage中得到当前user
+      _setUserFromSessionStorage: function() {
+        userStr = sessionStorage.rcAppUser;
+        if(userStr) {
+          this._user = JSON.parse(userStr);
+          return;
+        }
+
+        this._user = undefined;
+      },
+
+      // 从sessionStorage中得到当前user
+      _setHistoryUserFromLocalStorage: function() {
+        userStr = localStorage.rcAppHistoryUser;
+        if(userStr) {
+          this._historyUser = JSON.parse(userStr);
+          return;
+        }
+
+        this._historyUser = undefined;
+      },
+
       _computeUserCopy: function(user) {
+        if (!this._user) {
+          return this._user;
+        }
+
         return JSON.parse(JSON.stringify(user));
       },
 
       _computeHistoryUserCopy: function(historyUser) {
+        if (!this._historyUser) {
+          return this._historyUser;
+        }
+
         return JSON.parse(JSON.stringify(historyUser));
       },
 
       _computeIsLogin: function(user) {
-        return user === '' ? false : true;
+        return !!user;
       },
 
       /**
@@ -90,7 +154,11 @@
        *
        */
       setUser: function(user) {
-        this._user = user;
+        sessionStorage.setItem('rcAppUser', JSON.stringify(user));
+
+        this.fire('rc-app-user-updated', this, {
+          node: window.top
+        });
       },
 
       /**
@@ -98,7 +166,23 @@
        *
        */
       resetUser: function(user) {
-        this._user = '';
+        sessionStorage.removeItem('rcAppUser');
+
+        this.fire('rc-app-user-updated', this, {
+          node: window.top
+        });
+      },
+
+      /**
+       * 设置上次用户登录信息，会同步到全局及localStorage。
+       *
+       */
+      setHistoryUser: function(historyUser) {
+        localStorage.setItem('rcAppHistoryUser', JSON.stringify(historyUser));
+
+        this.fire('rc-app-history-user-updated', this, {
+          node: window.top
+        });
       },
 
       /**
@@ -106,23 +190,11 @@
        *
        */
       resetHistoryUser: function(historyUser) {
-        this._historyUser = '';
-      },
+        localStorage.removeItem('rcAppHistoryUser');
 
-      /**
-       * 设置上次用户登录信息，会同步到全局及localStorage。
-       *
-       */
-      setHistoryUser: function(user) {
-        this._historyUser = user;
-      },
-
-      /**
-       * 获取上次用户登录的信息。
-       *
-       */
-      getHistoryUserClone: function() {
-        return JSON.parse(JSON.stringify(this._historyUser));
+        this.fire('rc-app-history-user-updated', this, {
+          node: window.top
+        });
       }
     });
   </script>

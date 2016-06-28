@@ -11,9 +11,15 @@ bower install butterandfly/rc-app-user
 ```
 
 ## 使用
+`user-copy`属性来得到当前用户的copy（注意这是一个克隆，修改该克隆不会同步到全局）：
 
 ```html
-<rc-app-user>
+<rc-app-user id="appUser" user-copy="{{user}}">
 </rc-app-user>
 ```
 
+`setUser`方法来设置当前用户（全局同步）：
+
+```js
+this.$.appUser.setUser(this.user);
+```
