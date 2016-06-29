@@ -1,4 +1,4 @@
-# \<rc-app-user\>
+# \<rc-app-user\> [![Build Status](https://travis-ci.org/butterandfly/rc-app-user.svg?branch=master)](https://travis-ci.org/butterandfly/rc-app-user)
 
 一个全局的用户元素。
 

@@ -51,14 +51,6 @@
       suite('rc-app-user', function() {
         var user1, user2;
 
-        function timePasses(ms) {
-          return new Promise(function(resolve) {
-            window.setTimeout(function() {
-              resolve();
-            }, ms);
-          });
-        }
-
         setup(function() {
           document.querySelector('#basic').create();
           user1 = document.querySelector('#user1');
@@ -86,9 +78,7 @@
           user1.setUser(userData);
 
           assert.equal(user1.userCopy.username, 'testUser2');
-          return timePasses(1).then(function() {
-            assert.equal(user2.userCopy.username, 'testUser2');
-          });
+          assert.equal(user2.userCopy.username, 'testUser2');
         });
 
         test('resetUser', function() {
@@ -127,13 +117,11 @@
         });
 
         test('同步rc-app-user的historyUser', function() {
-          let userData = {username: 'testUser2'};
+          let userData = {username: 'testHistoryUser2'};
           user1.setHistoryUser(userData);
 
-          assert.equal(user1.historyUserCopy.username, 'testUser2');
-          return timePasses(1).then(function() {
-            assert.equal(user2.historyUserCopy.username, 'testUser2');
-          });
+          assert.equal(user1.historyUserCopy.username, 'testHistoryUser2');
+          assert.equal(user2.historyUserCopy.username, 'testHistoryUser2');
         });
 
       });
